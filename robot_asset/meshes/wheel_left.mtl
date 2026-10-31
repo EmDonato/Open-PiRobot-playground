@@ -1,0 +1,5 @@
+newmtl Rubber_Black
+Kd 0.08 0.08 0.08
+
+newmtl Rim_Blue
+Kd 0.12 0.28 0.85

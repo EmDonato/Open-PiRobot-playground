@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- DEPTH CAMERA -->
+
+    <joint name="realsense_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="realsense_link"/>
+        <!-- Sensor origin at the center of the assembly-coordinate OBJ mesh. -->
+        <origin xyz="0.1404 -0.0006 0.1839" rpy="0 0 0"/>
+    </joint>
+
+    <link name="realsense_link">
+        <visual>
+            <origin xyz="-0.1404 0.0006 -0.1839" rpy="0 0 0"/>
+            
+            <geometry>
+                <mesh filename="package://robot_descriptor/meshes/realsense.obj"
+                      scale="0.01 0.01 0.01"/>          
+           </geometry>
+        </visual>
+    </link>
+
+    <joint name="camera_joint" type="fixed">
+        <parent link="realsense_link"/>
+        <child link="camera_link"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="camera_link">
+
+    </link>
+
+
+</robot>

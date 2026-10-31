@@ -1,0 +1,160 @@
+gazebo:
+  gui: true
+  chase_distance: 1.0
+  chase_height: 0.4
+  headless_rendering: false
+  step_size: 0.001
+  real_time_factor: 1.0
+  seed: 42
+  world_file: ''
+  aws_house_dir: ../.simulation/assets/aws_small_house
+  spawn:
+  - -3.5
+  - -0.5
+  - 0.03
+  - 0.0
+sensors:
+  lidar_hz: 10.0
+  imu_hz: 100.0
+  encoder_hz: 50.0
+  rgbd_hz: 15.0
+  lidar_stddev: 0.02
+  gyro_stddev: 0.003
+  gyro_bias: 0.004
+  gyro_bias_stddev: 0.001
+  gyro_dynamic_bias_stddev: 0.0002
+  gyro_correlation_time: 100.0
+  accel_stddev: 0.017
+  encoder_stddev: 0.02
+  encoder_ticks_per_rev: 2048
+  reorder_window: 0.03
+  camera_noise: 0.005
+  width: 640
+  height: 480
+  camera_near: 0.15
+  camera_far: 8.0
+  camera_fov: 1.211
+motors:
+  control_hz: 100.0
+  wheel_radius: 0.0346
+  wheel_base: 0.2
+  max_wheel_rad_s: 12.0
+  time_constant: 0.08
+  acceleration_rad_s2: 35.0
+  deadband_rad_s: 0.2
+  gains:
+  - 1.0
+  - 0.98
+  torque_limit: 0.18
+  p_gain: 0.08
+  wheel_friction: 0.8
+  joint_damping: 0.0005
+  command_timeout: 0.5
+  start_armed: true
+teleop:
+  default: joystick
+  keyboard:
+    linear_speed: 0.2
+    angular_speed: 1.0
+    release_timeout: 0.6
+docker:
+  image: open-pirobot-simulation:jazzy
+  gpu: none
+  workspace: .simulation/docker
+  use: false
+runtime:
+  ros_domain_id: 42
+topics:
+  command: /cmd_vel
+  accepted: /cmd_vel/accepted
+  encoder: /enc/twist_meas
+  imu: /imu
+  scan: /scan
+  rgb: /camera/realsense/color/image_raw
+  depth: /camera/realsense/aligned_depth_to_color/image_raw
+  camera_info: /camera/realsense/color/camera_info
+  points: /camera/realsense/depth/color/points
+  control_service: /control/command
+slam:
+  parameter_file: ../sandbox/Ros2_slam/config/slam_toolbox_config.yaml
+components:
+  sensor_fusion:
+    enabled: true
+    package: ekf
+    executable: ekf_node
+    name: ekf
+    source: ../sandbox/Ros2_sensorFusion/src
+    parameter_files:
+    - ../sandbox/Ros2_sensorFusion/config/ekf.yaml
+    parameters: {}
+  joystick:
+    enabled: true
+    group: joystick
+    package: joy
+    executable: game_controller_node
+    name: joy
+    parameters:
+      device_id: 0
+      deadzone: 0.08
+      autorepeat_rate: 30.0
+      sticky_buttons: false
+      coalesce_interval_ms: 1
+  joystick_teleop:
+    enabled: true
+    group: joystick
+    package: teleop_twist_joy
+    executable: teleop_node
+    name: teleop_twist_joy
+    parameters:
+      require_enable_button: true
+      enable_button: 9
+      enable_turbo_button: -1
+      axis_linear.x: 1
+      scale_linear.x: 1.0
+      axis_angular.yaw: 2
+      scale_angular.yaw: 1.0
+      publish_stamped_twist: true
+    remappings:
+      cmd_vel: /cmd_vel/raw
+  joystick_reference:
+    enabled: true
+    group: joystick
+    package: joy_teleop_twist_ref
+    executable: joy_vel_ref
+    name: joy_vel_ref
+    source: ../sandbox/Ros2_teleoperation/src
+    parameters:
+      max_vel: 0.2
+      scales: 1.0
+      wheel_base: 0.2
+    remappings:
+      cmd_vel: /cmd_vel/joystick_stamped
+      cmd_vel/raw: /cmd_vel/raw
+  joystick_twist:
+    enabled: true
+    group: joystick
+    package: simulation_bringup
+    executable: stamped_to_twist
+    parameters:
+      max_age: 0.2
+    remappings:
+      input: /cmd_vel/joystick_stamped
+      output: /cmd_vel
+  joystick_buttons:
+    enabled: false
+    group: joystick
+    package: joy_service_pkg
+    executable: joy_service_node
+    name: joy_service_handler
+    parameters:
+      joy_service: true
+      arm_button: 0
+      reset_button: 6
+      control_service: /control/command
+  rviz:
+    enabled: true
+    package: rviz2
+    executable: rviz2
+    arguments:
+    - -d
+    - '{config_dir}/simulation.rviz'
