@@ -1,0 +1,9 @@
+[submodule "sandbox/Ros2_teleoperation"]
+	path = sandbox/Ros2_teleoperation
+	url = https://github.com/EmDonato/Ros2_teleoperation.git
+[submodule "sandbox/Ros2_slam"]
+	path = sandbox/Ros2_slam
+	url = https://github.com/EmDonato/Ros2_slam_module.git
+[submodule "sandbox/Ros2_sensorFusion"]
+	path = sandbox/Ros2_sensorFusion
+	url = https://github.com/EmDonato/Ros2_sensor_fusion.git
