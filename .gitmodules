@@ -7,3 +7,6 @@
 [submodule "sandbox/Ros2_sensorFusion"]
 	path = sandbox/Ros2_sensorFusion
 	url = https://github.com/EmDonato/Ros2_sensor_fusion.git
+[submodule "interfaces"]
+	path = interfaces
+	url = https://github.com/EmDonato/Ros2_interfaces.git
